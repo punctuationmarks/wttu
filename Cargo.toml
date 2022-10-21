@@ -1,0 +1,33 @@
+[package]
+name = "wttu"
+version = "0.1.0"
+edition = "2021"
+authors = ["punctuationmarks <ironistdesign@pm.me>"]
+license = "MIT OR Apache-2.0"
+description = "What Tool To Use? A tool to help point you in the correct direction for which tool to use when"
+readme = "README.md"
+homepage = ""
+repository = ""
+keywords = ["cli", "demo"]
+categories = ["command-line-utilities"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+# from tutorial, not sure if this is needed
+# Make tests work with the name used in the tutorial
+# [[bin]]
+# name = "grrs"
+# path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.0", features = ["derive"] }
+anyhow = "1.0"
+serde="1.0"
+# this might just be good for sys file autocomplete
+clap_autocomplete = "0.4.0"
+clap_complete = "4.0.3"
+serde_json = "1.0.87"
+
+[dev-dependencies]
+assert_cmd = "2.0"
+predicates = "2.1"
+assert_fs = "1.0"

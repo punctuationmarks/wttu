@@ -28,11 +28,12 @@ A simplistic tool for users who might be new or have forgotten which tools they 
 ## Current functionality
 
 ```
-$ cargo run <command>
+$ # install the tool from Crates.io
+$ cargo install wttu
 
-$ cargo run compress
+$ wttu <command>
 
-$ cargo run encrypt
-$ cargo run version-control
+$ wttu --help
+$ wttu version-control
 
 ```

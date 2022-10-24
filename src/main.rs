@@ -1,5 +1,3 @@
-// manual tree shaking:
-// #![deny(unused_crate_dependencies)]
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
 // use clap::Subcommand; // not entirely sure the usecase of a subcommand, but might be useful
@@ -19,6 +17,7 @@ struct CliArgs {
 // these derive attributes are neccessary to pass an enum value as cli params
 #[derive(ValueEnum, Clone, Debug)]
 enum DesiredOutcomes {
+    Checksum,
     CliGeneral,
     CliMeta,
     Compress,
@@ -51,15 +50,15 @@ const OS: &str = env::consts::OS;
 // read the documentation for anyhow; this is returning a custom, anyhow Result
 fn main() -> Result<()> {
     let args = CliArgs::parse();
-    
+
     // TODO:
     // make the erorr handling prod ready, this is just one
     // of the many ways to handle error handlings
     match find_suggestons(&args.desired_outcome, &mut std::io::stdout()) {
         Err(e) => println!("{:?}", e),
-        _ => ()
+        _ => (),
     }
-    
+
     Ok(())
 }
 
@@ -71,11 +70,12 @@ fn find_suggestons(
     mut writer: impl std::io::Write,
 ) -> Result<(), std::io::Error> {
     let json_output = create_json_output(OS);
-    // TODO:
-    // this returns a result that doesn't handle all errors, need to read the book a bit more
-    // to find out how to add error handling to match statements
+
     let output = match desired_outcome {
-        // two different ways to acess the field values
+        // TODO:
+        // pick a lane and go with it
+        // two different ways to acess the field values, just trying out the feel of it
+        DesiredOutcomes::Checksum => &json_output.get("checksum").unwrap(),
         DesiredOutcomes::CliGeneral => &json_output.get("cli_general").unwrap(),
         DesiredOutcomes::CliMeta => &json_output.get("cli_meta").unwrap(),
         DesiredOutcomes::Compress => &json_output.get("compress").unwrap(),
@@ -115,10 +115,10 @@ fn create_json_output(os: &str) -> serde_json::Value {
     // I envision adding a suggestion is just running a function that updates the json structure
     // (but would this also allow updating the enum param possibilities?)
 
-
     let json_output: serde_json::Value;
     if os == "windows" {
         json_output = json!({
+            "checksum":"",
             "cli_general":"",
             "cli_meta":"powershell",
             "compress":"",
@@ -151,8 +151,11 @@ fn create_json_output(os: &str) -> serde_json::Value {
             "not_sure_but_useful":"",
 
         });
+        // TODO:
+        // find more mac specific applications, not just assuming all these are UNIX
     } else if os == "mac" {
         json_output = json!({
+            "checksum":"",
             "cli_general": "clear, cp, scp",
             "cli_meta":"zsh",
             "compress": "gzip, tar, zip",
@@ -194,13 +197,14 @@ fn create_json_output(os: &str) -> serde_json::Value {
     // Linux being the default
     } else {
         json_output = json!({
+            "checksum":"md5sum, sha256sum",
             "cli_general": "clear, cp, scp",
             "cli_meta":"bash, zsh",
             "compress": "gzip, tar, zip",
             "document_editor": "libreoffice, mdbook",
             "editor": "gedit, nano, neo-vim, vim",
             "encode": "base64",
-            "encrypt": "fscrypt, gpg",
+            "encrypt": "fscrypt, gpg, openssl",
             "find": "find, grep, ripgrep",
             "firewall": "ufw, firewall-cmd",
             // should this be plural? and should this extend to ISOs?
@@ -223,7 +227,7 @@ fn create_json_output(os: &str) -> serde_json::Value {
             "random_generator": "apg",
             "system": "arch, free, fstrim, fuser, jobs, kexec, lsb_release, lsusb, lsof",
             // look up other vc standards,
-            "version_control": "git",
+            "version_control": "cvs, git",
 
             // cmp <- compare two files byte vs byte
             // codespell <- find typos in a dir

@@ -6,8 +6,8 @@ authors = ["punctuationmarks <ironistdesign@pm.me>"]
 license = "MIT OR Apache-2.0"
 description = "What Tool to Use? This is a tool to help guide you when you know what you want to do, but not sure what to tool to use."
 readme = "README.md"
-homepage = ""
-repository = ""
+homepage = "https://github.com/punctuationmarks/wttu"
+repository = "https://github.com/punctuationmarks/wttu"
 keywords = ["cli", "meta"]
 categories = ["command-line-utilities"]
 
@@ -27,7 +27,6 @@ clap_autocomplete = "0.4.0"
 clap_complete = "4.0.3"
 serde_json = "1.0.87"
 clap_generate = "3.0.3"
-clippy = "0.0.302"
 
 [dev-dependencies]
 assert_cmd = "2.0"

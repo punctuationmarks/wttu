@@ -1,11 +1,12 @@
 # What Tool To Use
-A simplistic tool for users who might be new or have forgotten which tools they should use for doing straight forward things around their system. 
+A simplistic tool for users who might be new or have forgotten which tools they should use for doing straight forward things around their system with offline first in mind. Currently it just prints general sugestions around what are some typical apps around Unix-esque systems and does not take account of the underlining OS. 
 
-## Goals:
+## Future Goals:
 - be platform respecting
     - if the binary is run on windows, mac, linux -  what tools to use where? it should automatically grab the underlining OS
+    - it would be nice to have a flag that could turn this feature off, since sometimes it's just nice to know some suggestions for offline systems.
 - keep with the FreeBSD mindset of having the tool's export be the input to something else
-- be opinionated, there are a million ways to do anything these days, what are the most common ways of solving the user's problem?
+- be somewhat opinionated, there are a million ways to do anything these days, what are the most common ways of solving the user's problem?
 - have a simplistic UX 
 
 
@@ -21,13 +22,17 @@ A simplistic tool for users who might be new or have forgotten which tools they 
         
 - tree shake unused dependencies 
 
+- need to go over the cli-apps-in-rust project to see how to execute the binary directly instead of running `cargo run command`
 
 
 ## Current functionality
 
 ```
+$ cargo run <command>
+
 $ cargo run compress
 
 $ cargo run encrypt
+$ cargo run version-control
 
 ```

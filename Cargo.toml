@@ -4,11 +4,11 @@ version = "0.1.0"
 edition = "2021"
 authors = ["punctuationmarks <ironistdesign@pm.me>"]
 license = "MIT OR Apache-2.0"
-description = "What Tool To Use? A tool to help point you in the correct direction for which tool to use when"
+description = "What Tool to Use? This is a tool to help guide you when you know what you want to do, but not sure what to tool to use."
 readme = "README.md"
 homepage = ""
 repository = ""
-keywords = ["cli", "demo"]
+keywords = ["cli", "meta"]
 categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -26,6 +26,8 @@ serde="1.0"
 clap_autocomplete = "0.4.0"
 clap_complete = "4.0.3"
 serde_json = "1.0.87"
+clap_generate = "3.0.3"
+clippy = "0.0.302"
 
 [dev-dependencies]
 assert_cmd = "2.0"

@@ -37,3 +37,23 @@ $ wttu --help
 $ wttu version-control
 
 ```
+
+
+
+## Contributing and publishing
+
+- update the main.rs file, 
+    - if extending current suggestions just update create_json_output() for desired OS
+    - if adding new category
+        - update DesiredOutcomes enum
+        - update find_suggestions() json
+        - update create_json_output
+
+- update Cargo.toml file to next semver
+- push to crates.io
+
+```
+$ cargo login <api token>
+$ cargo publish 
+
+```

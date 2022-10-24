@@ -237,6 +237,7 @@ fn create_json_output(os: &str) -> serde_json::Value {
             // exif <- metadata on jpef files
             // laptop-detect <- try to determine if on a laptop or desktop, whoa
             "not_sure_but_useful": "cmp, codespell, exif, laptop-detect",
+            // todo: update this
             "wttu_info":"wttu_info", 
 
         });

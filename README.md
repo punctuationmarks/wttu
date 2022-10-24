@@ -27,6 +27,9 @@ A simplistic tool for users who might be new or have forgotten which tools they 
 
 ## Current functionality
 
+TODO:
+look into whether or I'll have to run `cargo install wttu` to update it, or if there's another way
+
 ```
 $ # install the tool from Crates.io
 $ cargo install wttu

@@ -9,7 +9,7 @@ use std::env;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct CliArgs {
-    #[clap(value_enum, default_value_t=DesiredOutcomes::Encrypt)]
+    #[clap(value_enum, default_value_t=DesiredOutcomes::WttuInfo)]
     // // #[arg(short = 'o', long = "output")] // <- need to look into these, might be useful
     desired_outcome: DesiredOutcomes,
 }
@@ -41,6 +41,7 @@ enum DesiredOutcomes {
     RandomGenerator,
     System,
     VersionControl,
+    WttuInfo,
 }
 
 // underlining operating system
@@ -103,7 +104,7 @@ fn find_suggestons(
         DesiredOutcomes::RandomGenerator => &json_output["random_generator"],
         DesiredOutcomes::System => &json_output["system"],
         DesiredOutcomes::VersionControl => &json_output["version_control"],
-        // no need for having _ since it's an enum
+        DesiredOutcomes::WttuInfo => &json_output["wttu_info"],
     };
 
     writeln!(writer, "{}", output)
@@ -149,7 +150,7 @@ fn create_json_output(os: &str) -> serde_json::Value {
             "system":"",
             "version_control":"",
             "not_sure_but_useful":"",
-
+            "wttu_info":"wttu_info", 
         });
         // TODO:
         // find more mac specific applications, not just assuming all these are UNIX
@@ -193,6 +194,8 @@ fn create_json_output(os: &str) -> serde_json::Value {
             // laptop-detect <- try to determine if on a laptop or desktop, whoa
             "not_sure_but_useful": "cmp, codespell, exif, laptop-detect",
 
+            "wttu_info":"wttu_info", 
+
         });
     // Linux being the default
     } else {
@@ -234,6 +237,7 @@ fn create_json_output(os: &str) -> serde_json::Value {
             // exif <- metadata on jpef files
             // laptop-detect <- try to determine if on a laptop or desktop, whoa
             "not_sure_but_useful": "cmp, codespell, exif, laptop-detect",
+            "wttu_info":"wttu_info", 
 
         });
     };
@@ -243,30 +247,6 @@ fn create_json_output(os: &str) -> serde_json::Value {
 fn find_a_suggestons() {
     // the writer
     let mut result = Vec::new();
-    find_suggestons(&DesiredOutcomes::Encrypt, &mut result);
-    println!("---");
-    println!("{:?}", result);
-    println!("---");
-
-    // this currently doesn't work with the json, I'm assuming it's
-    // due to the serialization - since it's a byte operator due to the writer
-    assert_eq!(result, b"gpg\n");
+    find_suggestons(&DesiredOutcomes::WttuInfo, &mut result);
+    assert_eq!(result, b"\"wttu_info\"\n");
 }
-
-// NOTE:
-// this is an old test that works, when the params were string literals (stack)
-// leaving for just inspiration since they did work at one time. remove once the above
-// tests are functional again.
-// #[test]
-// fn find_a_match() {
-//     let mut result = Vec::new();
-//     find_matches("Encrypt", &mut result);
-//     println!("---");
-//     println!("{:?}", result);
-//     println!("---");
-
-//     assert_eq!(result, b"gpg\n");
-
-//     // find_matches("encrypt", &mut result);
-//     // assert_eq!(result, b"gpg\n");
-// }

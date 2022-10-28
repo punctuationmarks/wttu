@@ -1,3 +1,4 @@
+#![deny(unused_crate_dependencies)]
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
 // use clap::Subcommand; // not entirely sure the usecase of a subcommand, but might be useful
@@ -10,7 +11,7 @@ use std::env;
 #[command(author, version, about, long_about = None)]
 struct CliArgs {
     #[clap(value_enum, default_value_t=DesiredOutcomes::WttuInfo)]
-    // // #[arg(short = 'o', long = "output")] // <- need to look into these, might be useful
+    // #[arg(short = 'o', long = "output")] // <- need to look into these, might be useful
     desired_outcome: DesiredOutcomes,
 }
 
@@ -26,6 +27,7 @@ enum DesiredOutcomes {
     Encode,
     Encrypt,
     Find,
+    Fingerprinting,
     Firewall,
     Images,
     List,
@@ -38,6 +40,7 @@ enum DesiredOutcomes {
     Partition,
     Permission,
     Print, // print to the console
+    Privacy,
     RandomGenerator,
     System,
     VersionControl,
@@ -46,16 +49,12 @@ enum DesiredOutcomes {
 
 // underlining operating system
 const OS: &str = env::consts::OS;
+const WTTO_INFO :&str = "wtto is a tool that aims to give decent suggestions for how to accomplish a known task. Run -h for more info.";
 
-// TODO:
-// read the documentation for anyhow; this is returning a custom, anyhow Result
+
 fn main() -> Result<()> {
     let args = CliArgs::parse();
-
-    // TODO:
-    // make the erorr handling prod ready, this is just one
-    // of the many ways to handle error handlings
-    match find_suggestons(&args.desired_outcome, &mut std::io::stdout()) {
+    match find_suggestons(&args.desired_outcome, &mut std::io::stdout(), OS) {
         Err(e) => println!("{:?}", e),
         _ => (),
     }
@@ -69,8 +68,10 @@ fn main() -> Result<()> {
 fn find_suggestons(
     desired_outcome: &DesiredOutcomes,
     mut writer: impl std::io::Write,
+    os: &str
 ) -> Result<(), std::io::Error> {
-    let json_output = create_json_output(OS);
+    let json_output = create_json_output(os);
+
 
     let output = match desired_outcome {
         // TODO:
@@ -80,19 +81,16 @@ fn find_suggestons(
         DesiredOutcomes::CliGeneral => &json_output.get("cli_general").unwrap(),
         DesiredOutcomes::CliMeta => &json_output.get("cli_meta").unwrap(),
         DesiredOutcomes::Compress => &json_output.get("compress").unwrap(),
-        // should this have subcommands? document_editor ide_editor?
-        DesiredOutcomes::Editor => &json_output["editor"],
-        DesiredOutcomes::DocumentEditor => &json_output["document_editor"],
 
+        DesiredOutcomes::DocumentEditor => &json_output["document_editor"],
+        DesiredOutcomes::Editor => &json_output["editor"],
         DesiredOutcomes::Encode => &json_output["encode"],
         DesiredOutcomes::Encrypt => &json_output["encrypt"],
         DesiredOutcomes::Find => &json_output["find"],
+        DesiredOutcomes::Fingerprinting => &json_output["fingerprinting"],
         DesiredOutcomes::Firewall => &json_output["firewall"],
         DesiredOutcomes::Images => &json_output["images"],
-        // prints the entire nested json
-        // DesiredOutcomes::List => &json_output["list"],
-        // prints just the applications
-        DesiredOutcomes::List => &json_output["list"]["apps"],
+        DesiredOutcomes::List => &json_output["list"],
         DesiredOutcomes::Manual => &json_output["manual"],
         DesiredOutcomes::Meta => &json_output["meta"],
         DesiredOutcomes::NavigateLocal => &json_output["navigate_local"],
@@ -101,6 +99,7 @@ fn find_suggestons(
         DesiredOutcomes::Partition => &json_output["partition"],
         DesiredOutcomes::Permission => &json_output["permissions"],
         DesiredOutcomes::Print => &json_output["print"],
+        DesiredOutcomes::Privacy => &json_output["privacy"],
         DesiredOutcomes::RandomGenerator => &json_output["random_generator"],
         DesiredOutcomes::System => &json_output["system"],
         DesiredOutcomes::VersionControl => &json_output["version_control"],
@@ -116,47 +115,45 @@ fn create_json_output(os: &str) -> serde_json::Value {
     // I envision adding a suggestion is just running a function that updates the json structure
     // (but would this also allow updating the enum param possibilities?)
 
+    let no_entry: String = format!("No entry yet for that on {}, sorry. Feel free to open a PR for suggestions or email them to phoebx@pm.me or ironistdesign@pm.me", OS);
     let json_output: serde_json::Value;
     if os == "windows" {
         json_output = json!({
-            "checksum":"",
-            "cli_general":"",
+            "checksum":&no_entry,
+            "cli_general":&no_entry,
             "cli_meta":"powershell",
-            "compress":"",
+            "compress":&no_entry,
             "document_editor":"libreoff, notepad++, openoffice",
             "editor":"notepad++",
-            "encode":"",
-            "encrypt":"",
-            "find":"",
-            "firewall":"",
-            // should this be plural? and should this extend to ISOs?
-            "images":"",
-            "images_iso":"",
-            // not sure if this is the correct way to go about this, could be a helper function in clap for --help on each
-            "list":{
-                "description":"",
-                "apps":"",
-            },
-            "manual":"",
+            "encode":&no_entry,
+            "encrypt":&no_entry,
+            "find":&no_entry,
+            "fingerprinting":&no_entry, 
+            "firewall":&no_entry,
+            "images":&no_entry,
+            "images_iso":&no_entry,
+            "list":&no_entry,
+            "manual":&no_entry,
             "meta": "tldr",
-            "navigate_local":"",
-            "networking":"",
-            "package_manager":"",
-            "passwords":"",
-            "partition":"",
-            "permissions":"",
-            "print":"",
-            "random_generator":"",
-            "system":"",
-            "version_control":"",
-            "not_sure_but_useful":"",
-            "wttu_info":"wttu_info", 
+            "navigate_local":&no_entry,
+            "networking":&no_entry,
+            "package_manager":&no_entry,
+            "passwords":&no_entry,
+            "partition":&no_entry,
+            "permissions":&no_entry,
+            "print":&no_entry,
+            "privacy": "tor",
+            "random_generator":&no_entry,
+            "system":&no_entry,
+            "version_control":&no_entry,
+            "not_sure_but_useful":&no_entry,
+            "wttu_info": WTTO_INFO, 
         });
         // TODO:
         // find more mac specific applications, not just assuming all these are UNIX
     } else if os == "mac" {
         json_output = json!({
-            "checksum":"",
+            "checksum":&no_entry,
             "cli_general": "clear, cp, scp",
             "cli_meta":"zsh",
             "compress": "gzip, tar, zip",
@@ -165,15 +162,11 @@ fn create_json_output(os: &str) -> serde_json::Value {
             "encode": "base64",
             "encrypt": "fscrypt, gpg",
             "find": "find, grep, ripgrep",
+            "fingerprinting": "latpot-detect", 
             "firewall": "ufw, firewall-cmd",
-            // should this be plural? and should this extend to ISOs?
-            "images": "imgp", // "pictures"
-            "images_iso": "docker, isoinfo", // "images"
-            // not sure if this is the correct way to go about this, could be a helper function in clap for --help on each
-            "list": {
-                "description":"list everything in a directory",
-                "apps":"dir, exa, ls, tree"
-            },
+            "images": "imgp", // "pictures" like jpeg
+            "images_iso": "docker, isoinfo", // "images" like iso, contianers
+            "list": "dir, exa, ls, tree",
             "manual": "cheat, man, tldr",
             "meta": "cheat, man, tldr",
             "navigate_local": "cd, pwd",
@@ -183,18 +176,11 @@ fn create_json_output(os: &str) -> serde_json::Value {
             "partition": "fdisk, gparted, lvm, lvresize", // should logical volumes be here?
             "permissions": "chmod, chown, chroot",
             "print": "bat, cat, chafa, head",
+            "privacy": "exif, tor",
             "random_generator": "apg",
-            "system": "arch, free, fstrim, fuser, jobs, kexec, lsb_release, lsusb, lsof",
-            // look up other vc standards,
+            "system": "arch, free, fstrim, fuser, jobs, kexec, lsb_release, lsusb, lsof", 
             "version_control": "git",
-
-            // cmp <- compare two files byte vs byte
-            // codespell <- find typos in a dir
-            // exif <- metadata on jpef files
-            // laptop-detect <- try to determine if on a laptop or desktop, whoa
-            "not_sure_but_useful": "cmp, codespell, exif, laptop-detect",
-
-            "wttu_info":"wttu_info", 
+            "wttu_info": WTTO_INFO, 
 
         });
     // Linux being the default
@@ -204,20 +190,17 @@ fn create_json_output(os: &str) -> serde_json::Value {
             "cli_general": "clear, cp, scp",
             "cli_meta":"bash, zsh",
             "compress": "gzip, tar, zip",
-            "document_editor": "libreoffice, mdbook",
-            "editor": "gedit, nano, neo-vim, vim",
+            "document_editor": "cmp, codespell, libreoffice, mdbook",
+            "editor": "cmp, codespell, gedit, nano, neo-vim, vim",
             "encode": "base64",
             "encrypt": "fscrypt, gpg, openssl",
             "find": "find, grep, ripgrep",
+            "fingerprinting": "latpot-detect",
             "firewall": "ufw, firewall-cmd",
             // should this be plural? and should this extend to ISOs?
             "images": "imgp", // "pictures"
             "images_iso": "docker, isoinfo", // "images"
-            // not sure if this is the correct way to go about this, could be a helper function in clap for --help on each
-            "list": {
-                "description":"list everything in a directory",
-                "apps":"dir, exa, ls, tree"
-            },
+            "list": "dir, exa, ls, tree",
             "manual": "cheat, man, tldr",
             "meta": "cheat, man, tldr",
             "navigate_local": "cd, pwd",
@@ -227,9 +210,9 @@ fn create_json_output(os: &str) -> serde_json::Value {
             "partition": "fdisk, gparted, lvm, lvresize", // should logical volumes be here?
             "permissions": "chmod, chown, chroot",
             "print": "bat, cat, chafa, head",
+            "privacy": "exif, tor",
             "random_generator": "apg",
             "system": "arch, free, fstrim, fuser, jobs, kexec, lsb_release, lsusb, lsof",
-            // look up other vc standards,
             "version_control": "cvs, git",
 
             // cmp <- compare two files byte vs byte
@@ -238,16 +221,27 @@ fn create_json_output(os: &str) -> serde_json::Value {
             // laptop-detect <- try to determine if on a laptop or desktop, whoa
             "not_sure_but_useful": "cmp, codespell, exif, laptop-detect",
             // todo: update this
-            "wttu_info":"wttu_info", 
+            "wttu_info": WTTO_INFO, 
 
         });
     };
     return json_output;
 }
 #[test]
-fn find_a_suggestons() {
+fn find_encode_suggeston() {
     // the writer
     let mut result = Vec::new();
-    find_suggestons(&DesiredOutcomes::WttuInfo, &mut result);
-    assert_eq!(result, b"\"wttu_info\"\n");
+    find_suggestons(&DesiredOutcomes::Encode, &mut result, &"linux");
+    assert_eq!(result, b"\"base64\"\n");
 }
+
+#[test]
+fn find_info_suggeston() {
+    // the writer
+    let WTTO_INFO_BYTE :&[u8; 112]  = b"\"wtto is a tool that aims to give decent suggestions for how to accomplish a known task. Run -h for more info.\"\n";
+
+    let mut result = Vec::new();
+    find_suggestons(&DesiredOutcomes::WttuInfo, &mut result, &"windows");
+    assert_eq!(result, WTTO_INFO_BYTE);
+}
+

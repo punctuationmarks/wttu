@@ -1,6 +1,9 @@
 # What Tool To Use
 A simplistic tool for users who might be new or have forgotten which tools they should use for doing straight forward things around their system with offline first in mind. Currently it just prints general sugestions around what are some typical apps around Unix-esque systems and does not take account of the underlining OS. 
 
+# Disclaimer
+This is a work in progress. I don't develop on Windows or Mac often, so those tools might be out of date or missing, am looking into suggestions from other developers. Also, this will be a rolling release, so feel free to update often, contribute by opening a pull request or sending me an email with any suggestions
+
 ## Future Goals:
 - be platform respecting
     - if the binary is run on windows, mac, linux -  what tools to use where? it should automatically grab the underlining OS

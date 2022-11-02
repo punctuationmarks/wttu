@@ -54,10 +54,10 @@ const WTTO_INFO :&str = "wtto is a tool that aims to give decent suggestions for
 
 fn main() -> Result<()> {
     let args = CliArgs::parse();
-    match find_suggestons(&args.desired_outcome, &mut std::io::stdout(), OS) {
-        Err(e) => println!("{:?}", e),
-        _ => (),
-    }
+
+    if let Err(e) = find_suggestons(&args.desired_outcome, &mut std::io::stdout(), OS) { 
+            eprint!("{:?}", e) 
+        }
 
     Ok(())
 }
@@ -75,12 +75,12 @@ fn find_suggestons(
 
     let output = match desired_outcome {
         // TODO:
-        // pick a lane and go with it
-        // two different ways to acess the field values, just trying out the feel of it
-        DesiredOutcomes::Checksum => &json_output.get("checksum").unwrap(),
-        DesiredOutcomes::CliGeneral => &json_output.get("cli_general").unwrap(),
-        DesiredOutcomes::CliMeta => &json_output.get("cli_meta").unwrap(),
-        DesiredOutcomes::Compress => &json_output.get("compress").unwrap(),
+        // pick a lane and go with it, currently
+        // two different ways to acess the json field values, just trying out the feel of it
+        DesiredOutcomes::Checksum => json_output.get("checksum").unwrap(),
+        DesiredOutcomes::CliGeneral => json_output.get("cli_general").unwrap(),
+        DesiredOutcomes::CliMeta => json_output.get("cli_meta").unwrap(),
+        DesiredOutcomes::Compress => json_output.get("compress").unwrap(),
 
         DesiredOutcomes::DocumentEditor => &json_output["document_editor"],
         DesiredOutcomes::Editor => &json_output["editor"],
@@ -225,7 +225,8 @@ fn create_json_output(os: &str) -> serde_json::Value {
 
         });
     };
-    return json_output;
+
+    json_output
 }
 #[test]
 fn find_encode_suggeston() {

@@ -6,32 +6,25 @@ This is a work in progress. I don't develop on Windows or Mac often, so those to
 
 ## Future Goals:
 - be platform respecting
-    - if the binary is run on windows, mac, linux -  what tools to use where? it should automatically grab the underlining OS
-    - it would be nice to have a flag that could turn this feature off, since sometimes it's just nice to know some suggestions for offline systems.
-- keep with the FreeBSD mindset of having the tool's export be the input to something else
+    - it currently grab the underlining OS, it would be nice to have a flag that could turn this feature off, since sometimes it's just nice to know some suggestions for offline systems.
+- keep with the mindset of having the tool's export be the input to something else, so return json option
 - be somewhat opinionated, there are a million ways to do anything these days, what are the most common ways of solving the user's problem?
-- have a simplistic UX 
+- have a simplistic UX
 
 
 ## Todo:
 - Need to research the top tools for which problem to solve,
     would be nice if there was an api to just grab that from
+- maybe look into this [great repo](https://github.com/agarrharr/awesome-cli-apps) by @agarrharr 
 
-- Ideally be able to incorperate it into tldr, so the output of wttu can be used at the input of tldr,
+- Ideally be able to incorperate it into tldr or cheat, so the output of wttu can be used at the input,
     - Issues around this:
-        - if there are 3 suggestions, which to render first? 
+        - if there are 1 + x suggestions, which to render first?  
         - should the user have the option to pick which tool to push into tldr?
             - if so, is this index based?
-        
-- tree shake unused dependencies 
-
-- need to go over the cli-apps-in-rust project to see how to execute the binary directly instead of running `cargo run command`
-
+    
 
 ## Current functionality
-
-TODO:
-look into whether or I'll have to run `cargo install wttu` to update it, or if there's another way
 
 ```
 $ # install the tool from Crates.io

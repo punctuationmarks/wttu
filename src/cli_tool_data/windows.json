@@ -1,6 +1,6 @@
 {
     "platform": "windows",
-    
+
     "checksum":"",
     "cli_general":"assoc, copy, move, shutdown, xcopy",
     "cli_meta": "powercfg, powershell",
@@ -24,7 +24,7 @@
     "partition":"",
     "permissions":"",
     "print":"",
-    "privacy": "tor",
+    "privacy": "onionshare, tor",
     "random_generator":"",
     "system":"chkdsk, driverquery, format, sfc, taskkill, tasklist",
     "version_control":"git",

@@ -5,10 +5,12 @@ use std::{env, io};
 
 mod cli;
 
+const OS: &str = env::consts::OS;
+
 fn main() -> Result<()> {
     let args = cli::WttuArgs::parse();
     let desired_outcome = &args.desired_outcome;
-    let platform = &args.platform.unwrap_or(underlining_os_to_enum());
+    let platform = &args.platform.unwrap_or(cli::underlining_os_to_enum(OS));
 
     let std_out = &mut io::stdout();
 
@@ -19,16 +21,4 @@ fn main() -> Result<()> {
     }
 
     Ok(())
-}
-
-
-// these should be in a global helpers mod
-fn underlining_os_to_enum() -> cli::SupportedPlatforms {
-    let os: &str = env::consts::OS;
-    match os {
-        "linux" => cli::SupportedPlatforms::Linux,
-        "mac" => cli::SupportedPlatforms::Linux,
-        "windows" => cli::SupportedPlatforms::Linux,
-        _ => cli::SupportedPlatforms::Unsupported,
-    }
 }

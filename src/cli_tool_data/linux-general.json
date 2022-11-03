@@ -23,7 +23,7 @@
     "partition": "fdisk, gparted, lvm, lvresize",
     "permissions": "chmod, chown, chroot",
     "print": "bat, cat, chafa, head",
-    "privacy": "exif, tor",
+    "privacy": "exif, onionshare, tor",
     "random_generator": "apg",
     "system": "arch, free, fstrim, fuser, jobs, kexec, lsb_release, lsusb, lsof",
     "version_control": "cvs, git",

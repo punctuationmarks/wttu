@@ -40,6 +40,7 @@ pub enum DesiredOutcomes {
     CliGeneral,
     CliMeta,
     Compress,
+    Currency,
     DocumentEditor,
     Editor,
     Encode,
@@ -74,7 +75,10 @@ pub fn find_cli_suggestons(
     os: &SupportedPlatforms,
 ) -> Result<(), std::io::Error> {
     let json_output = create_json_output(os);
+
+    // default values for all platforms
     let wtto_info = json!("wtto is a tool that aims to give decent suggestions for how to accomplish a known task. Run -h for more info.");
+    let currency = json!("btc, monero, wownero");
     let no_entry = json!(format!("No entry yet for that on {:?}, sorry. Feel free to open a PR for suggestions or email them to phoebx@pm.me or ironistdesign@pm.me", os));
 
     let output = match desired_outcome {
@@ -107,6 +111,7 @@ pub fn find_cli_suggestons(
         DesiredOutcomes::VersionControl => json_output.get("version_control").unwrap_or(&no_entry),
 
         // hard coded entrees for all platforms
+        DesiredOutcomes::Currency => &currency,
         DesiredOutcomes::WttuInfo => &wtto_info,
     };
 
@@ -175,6 +180,19 @@ fn create_json_output(os: &SupportedPlatforms) -> serde_json::Value {
     json_output
 }
 
+pub fn underlining_os_to_enum(os: &str) -> SupportedPlatforms {
+    match os {
+        "linux" => SupportedPlatforms::Linux,
+        "mac" => SupportedPlatforms::Mac,
+        "windows" => SupportedPlatforms::Windows,
+        _ => SupportedPlatforms::Unsupported,
+    }
+}
+
+
+
+// TODO:
+// find a better way to automate the testing instead of magic strings
 #[test]
 fn find_encode_suggeston() {
     // the writer

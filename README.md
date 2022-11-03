@@ -5,8 +5,6 @@ A simplistic tool for users who might be new or have forgotten which tools they 
 This is a work in progress. I don't develop on Windows or Mac often, so those tools might be out of date or missing, am looking into suggestions from other developers. Also, this will be a rolling release, so feel free to update often, contribute by opening a pull request or sending me an email with any suggestions
 
 ## Future Goals:
-- be platform respecting
-    - it currently grab the underlining OS, it would be nice to have a flag that could turn this feature off, since sometimes it's just nice to know some suggestions for offline systems.
 - keep with the mindset of having the tool's export be the input to something else, so return json option
 - be somewhat opinionated, there are a million ways to do anything these days, what are the most common ways of solving the user's problem?
 - have a simplistic UX
@@ -30,10 +28,13 @@ This is a work in progress. I don't develop on Windows or Mac often, so those to
 $ # install the tool from Crates.io
 $ cargo install wttu
 
-$ wttu <command>
+$ wttu <command> <platform>
 
 $ wttu --help
-$ wttu version-control
+$ wttu encrypt 
+$ # passing optional OS, if not OS is passed, will grab OS being run on from std::env
+$ wttu encrypt windows
+$ wttu encrypt linux
 
 ```
 

@@ -19,17 +19,19 @@ pub struct WttuArgs {
     pub desired_outcome: DesiredOutcomes,
     // TODO, implement this, will require refactor create_json_output to be match statement and maybe more
     // need to also look into how clap handles multiple arguments and how to make them optional
-    // pub platform: SupportedPlatforms,
+    #[clap(value_enum)]
+    pub platform: Option<SupportedPlatforms>,
 }
 
 // TODO:
 // is there a way to pass these as shorthand? -l for linux, -m for mac, etc
-// #[derive(ValueEnum, Clone, Debug)]
-// pub enum SupportedPlatforms {
-//     Linux,
-//     Mac,
-//     Windows
-// }
+#[derive(Clone, Debug, ValueEnum)]
+pub enum SupportedPlatforms {
+    Linux,
+    Mac,
+    Windows,
+    Unsupported,
+}
 
 // these derive attributes are neccessary to pass an enum value as cli params
 #[derive(ValueEnum, Clone, Debug)]
@@ -69,11 +71,11 @@ pub enum DesiredOutcomes {
 pub fn find_cli_suggestons(
     desired_outcome: &DesiredOutcomes,
     mut writer: impl std::io::Write,
-    os: &str,
+    os: &SupportedPlatforms,
 ) -> Result<(), std::io::Error> {
     let json_output = create_json_output(os);
     let wtto_info = json!("wtto is a tool that aims to give decent suggestions for how to accomplish a known task. Run -h for more info.");
-    let no_entry = json!(format!("No entry yet for that on {os}, sorry. Feel free to open a PR for suggestions or email them to phoebx@pm.me or ironistdesign@pm.me"));
+    let no_entry = json!(format!("No entry yet for that on {:?}, sorry. Feel free to open a PR for suggestions or email them to phoebx@pm.me or ironistdesign@pm.me", os));
 
     let output = match desired_outcome {
         DesiredOutcomes::Checksum => json_output.get("checksum").unwrap_or(&no_entry),
@@ -113,57 +115,66 @@ pub fn find_cli_suggestons(
     writeln!(writer, "{}", output)
 }
 
-fn create_json_output(os: &str) -> serde_json::Value {
+fn create_json_output(os: &SupportedPlatforms) -> serde_json::Value {
     // TODO:
     // abstract this in such a way that it can be programatically added to.
     // I envision adding a suggestion is just running a function that updates the json structure
     // (but would this also allow updating the enum param possibilities?)
 
     let panic_msg = "create_json_output() - json data is malformed and pointing to the wrong platform. might need to open up the hood and fix the data's json file, or reach out to the dev";
-
+    // println!("{:?}", os);
+    // let supported_platforms = SupportedPlatforms::from_str(&capitalize(os)).unwrap();
+    // println!("supported platform passed in: {:?}", supported_platforms);
     let json_output: serde_json::Value;
-    if os == "windows" {
-        let data = fs::read_to_string("./src/cli_tool_data/windows.json")
-            .expect("unable to read json file");
-        let json: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
-        let platform = &json["platform"];
-        let windows = json!("windows");
+    match os {
+        SupportedPlatforms::Linux => {
+            let data = fs::read_to_string("./src/cli_tool_data/linux-general.json")
+                .expect("unable to read json file");
+            let json: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
+            let platform = &json["platform"];
+            let linux = json!("linux");
 
-        if platform == &windows {
-            json_output = json!(&json);
-        } else {
-            panic!("{}", panic_msg)
+            if platform == &linux {
+                json_output = json!(&json);
+                // something is messed up at the json level
+            } else {
+                panic!("{}", panic_msg)
+            }
         }
-    } else if os == "mac" {
-        let data =
-            fs::read_to_string("./src/cli_tool_data/mac.json").expect("unable to read json file");
-        let json: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
-        let platform = &json["platform"];
-        let mac = json!("mac");
+        SupportedPlatforms::Mac => {
+            let data = fs::read_to_string("./src/cli_tool_data/mac.json")
+                .expect("unable to read json file");
+            let json: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
+            let platform = &json["platform"];
+            let mac = json!("mac");
 
-        if platform == &mac {
-            json_output = json!(&json);
-        } else {
-            panic!("{}", panic_msg)
+            if platform == &mac {
+                json_output = json!(&json);
+            } else {
+                panic!("{}", panic_msg)
+            }
         }
+        SupportedPlatforms::Windows => {
+            let data = fs::read_to_string("./src/cli_tool_data/windows.json")
+                .expect("unable to read json file");
+            let json: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
+            let platform = &json["platform"];
+            let windows = json!("windows");
 
-    // Linux being the default
-    } else {
-        let data = fs::read_to_string("./src/cli_tool_data/linux-general.json")
-            .expect("unable to read json file");
-        let json: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
-        let platform = &json["platform"];
-        let linux = json!("linux");
-
-        if platform == &linux {
-            json_output = json!(&json);
-        } else {
-            panic!("{}", panic_msg)
+            if platform == &windows {
+                json_output = json!(&json);
+            } else {
+                panic!("{}", panic_msg)
+            }
+        }
+        SupportedPlatforms::Unsupported => {
+            json_output = json!("Unsupported platform, check out Linux for some options");
         }
     };
 
     json_output
 }
+
 #[test]
 fn find_encode_suggeston() {
     // the writer

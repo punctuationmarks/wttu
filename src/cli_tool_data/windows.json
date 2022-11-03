@@ -1,4 +1,6 @@
 {
+    "platform": "windows",
+    
     "checksum":"",
     "cli_general":"assoc, copy, move, shutdown, xcopy",
     "cli_meta": "powercfg, powershell",

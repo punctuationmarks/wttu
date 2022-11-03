@@ -1,4 +1,6 @@
 {
+    "platform": "mac",
+    
     "checksum":"",
     "cli_general": "clear, cp, scp",
     "cli_meta": "zsh",

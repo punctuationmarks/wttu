@@ -45,7 +45,7 @@ $ wttu encrypt linux
 - update the main.rs file, 
     - if extending current suggestions just update create_json_output() for desired OS
     - if adding new category
-        - update DesiredOutcomes enum
+        - update DesiredCliOutcomes enum
         - update find_suggestions() json
         - update create_json_output
 

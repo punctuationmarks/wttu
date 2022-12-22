@@ -1,7 +1,7 @@
-use anyhow::Result;
+// use anyhow::Result;
 use clap::{Parser, ValueEnum};
 use serde_json::json;
-use std::fs;
+use std::{fs};
 
 /**
  * This mod creates Command Line suggestions. If extending to GUI, protocol, paradigm, language, etc etc, create addition mods and update accordingly.
@@ -67,13 +67,12 @@ pub enum DesiredOutcomes {
 }
 
 // TODO:
-// extend this to have a json flag that will allow it to be piped into the next stage?
-// need to think this through further
+// extend this to have a json flag that will allow it to be piped into the next stage
 pub fn find_cli_suggestons(
     desired_outcome: &DesiredOutcomes,
     mut writer: impl std::io::Write,
     os: &SupportedPlatforms,
-) -> Result<(), std::io::Error> {
+) {
     let json_output = create_json_output(os);
 
     // default values for all platforms
@@ -115,10 +114,12 @@ pub fn find_cli_suggestons(
         DesiredOutcomes::WttuInfo => &wtto_info,
     };
 
-    // TODO:
-    // add error handling here
-    writeln!(writer, "{}", output)
+    if let Err(e) = writeln!(writer, "{}", output) {
+        eprint!("{:?}", e)
+    }
+
 }
+
 
 fn create_json_output(os: &SupportedPlatforms) -> serde_json::Value {
     // TODO:
@@ -133,7 +134,7 @@ fn create_json_output(os: &SupportedPlatforms) -> serde_json::Value {
     let json_output: serde_json::Value;
     match os {
         SupportedPlatforms::Linux => {
-            let data = fs::read_to_string("./src/cli_tool_data/linux-general.json")
+            let data = fs::read_to_string("./src/json_platform_data/linux-general.json")
                 .expect("unable to read json file");
             let json: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
             let platform = &json["platform"];
@@ -147,7 +148,7 @@ fn create_json_output(os: &SupportedPlatforms) -> serde_json::Value {
             }
         }
         SupportedPlatforms::Mac => {
-            let data = fs::read_to_string("./src/cli_tool_data/mac.json")
+            let data = fs::read_to_string("./src/json_platform_data/mac.json")
                 .expect("unable to read json file");
             let json: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
             let platform = &json["platform"];
@@ -160,7 +161,7 @@ fn create_json_output(os: &SupportedPlatforms) -> serde_json::Value {
             }
         }
         SupportedPlatforms::Windows => {
-            let data = fs::read_to_string("./src/cli_tool_data/windows.json")
+            let data = fs::read_to_string("./src/json_platform_data/windows.json")
                 .expect("unable to read json file");
             let json: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
             let platform = &json["platform"];
@@ -197,15 +198,15 @@ pub fn underlining_os_to_enum(os: &str) -> SupportedPlatforms {
 fn find_encode_suggeston() {
     // the writer
     let mut result = Vec::new();
-    find_cli_suggestons(&DesiredOutcomes::Encode, &mut result, &"linux");
+    find_cli_suggestons(&DesiredOutcomes::Encode, &mut result, &SupportedPlatforms::Linux);
     assert_eq!(result, b"\"base64\"\n");
 
     let mut result = Vec::new();
-    find_cli_suggestons(&DesiredOutcomes::Encode, &mut result, &"mac");
+    find_cli_suggestons(&DesiredOutcomes::Encode, &mut result, &SupportedPlatforms::Mac);
     assert_eq!(result, b"\"base64\"\n");
 
     let mut result = Vec::new();
-    find_cli_suggestons(&DesiredOutcomes::Encode, &mut result, &"windows");
+    find_cli_suggestons(&DesiredOutcomes::Encode, &mut result, &SupportedPlatforms::Windows);
     assert_eq!(result, b"\"CertUtil\"\n");
 }
 
@@ -215,6 +216,6 @@ fn find_info_suggeston() {
     let wtto_byte_info :&[u8; 112]  = b"\"wtto is a tool that aims to give decent suggestions for how to accomplish a known task. Run -h for more info.\"\n";
 
     let mut result = Vec::new();
-    find_cli_suggestons(&DesiredOutcomes::WttuInfo, &mut result, &"windows");
+    find_cli_suggestons(&DesiredOutcomes::WttuInfo, &mut result, &SupportedPlatforms::Windows);
     assert_eq!(result, wtto_byte_info);
 }

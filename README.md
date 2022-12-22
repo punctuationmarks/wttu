@@ -45,7 +45,7 @@ $ wttu encrypt linux
 - update the main.rs file, 
     - if extending current suggestions just update create_json_output() for desired OS
     - if adding new category
-        - update DesiredOutcomes enum
+        - update DesiredCliOutcomes enum
         - update find_suggestions() json
         - update create_json_output
 
@@ -57,3 +57,11 @@ $ cargo login <api token>
 $ cargo publish 
 
 ```
+
+
+- Local dev
+``` 
+$ cargo build
+# cargo run <desired_outcome> <platform>
+# eg
+$ cargo run encrypt windows

@@ -23,7 +23,7 @@ This is a work in progress. I don't develop on Windows or Mac often, so those to
     
 
 ## Current functionality
-
+ 
 ```
 $ # install the tool from Crates.io
 $ cargo install wttu

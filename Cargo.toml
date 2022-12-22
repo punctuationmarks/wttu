@@ -1,6 +1,6 @@
 [package]
 name = "wttu"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 authors = ["punctuationmarks <ironistdesign@pm.me>"]
 license = "MIT OR Apache-2.0"
@@ -10,6 +10,7 @@ homepage = "https://github.com/punctuationmarks/wttu"
 repository = "https://github.com/punctuationmarks/wttu"
 keywords = ["cli", "meta"]
 categories = ["command-line-utilities"]
+include = ["/src/json_platform_data/**"]
 
 [dependencies]
 anyhow = "1.0"

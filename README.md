@@ -57,3 +57,11 @@ $ cargo login <api token>
 $ cargo publish 
 
 ```
+
+
+- Local dev
+``` 
+$ cargo build
+# cargo run <desired_outcome> <platform>
+# eg
+$ cargo run encrypt windows

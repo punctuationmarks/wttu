@@ -154,7 +154,7 @@ pub fn find_cli_suggestons(
 fn create_json_output(os: &SupportedPlatforms) -> serde_json::Value {
     let json_output: serde_json::Value = match os {
         SupportedPlatforms::Linux => {
-            let data = fs::read_to_string("./src/cli_tool_data/linux-general.json")
+            let data = fs::read_to_string("./src/json_platform_data/linux-general.json")
                 .expect("unable to read json file");
             let json_data: serde_json::Value =
                 serde_json::from_str(&data).expect("json is malformed");
@@ -162,7 +162,7 @@ fn create_json_output(os: &SupportedPlatforms) -> serde_json::Value {
             return_json_output(&json_data["platform"], json!("linux"), &json_data)
         }
         SupportedPlatforms::Mac => {
-            let data = fs::read_to_string("./src/cli_tool_data/mac.json")
+            let data = fs::read_to_string("./src/json_platform_data/mac.json")
                 .expect("unable to read json file");
 
             let json_data: serde_json::Value =
@@ -170,7 +170,7 @@ fn create_json_output(os: &SupportedPlatforms) -> serde_json::Value {
             return_json_output(&json_data["platform"], json!("mac"), &json_data)
         }
         SupportedPlatforms::Windows => {
-            let data = fs::read_to_string("./src/cli_tool_data/windows.json")
+            let data = fs::read_to_string("./src/json_platform_data/windows.json")
                 .expect("unable to read json file");
 
             let json_data: serde_json::Value =

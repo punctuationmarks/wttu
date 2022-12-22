@@ -1,6 +1,6 @@
 use clap::{Parser, ValueEnum};
 use serde_json::json;
-use std::fs;
+use std;
 
 /**
  * This mod creates Command Line suggestions. If extending to Gui, protocol, paradigm, language, etc etc, create addition mods and update accordingly.
@@ -60,7 +60,6 @@ pub enum DesiredCliOutcomes {
     CliGeneral,
     CliMeta,
     Compress,
-    Currency,
     DocumentEditor,
     Editor,
     Encode,
@@ -99,7 +98,6 @@ pub fn find_cli_suggestons(
 
     // default values for all platforms
     let wtto_info = json!("wtto is a tool that aims to give decent suggestions for how to accomplish a known task. Run -h for more info.");
-    let currency = json!("btc, monero, wownero");
     let no_entry = json!(format!("No entry yet for that on {:?}, sorry. Feel free to open a PR for suggestions or email them to phoebx@pm.me or ironistdesign@pm.me", os));
 
     let output = match desired_outcome {
@@ -139,8 +137,7 @@ pub fn find_cli_suggestons(
             json_output.get("version_control").unwrap_or(&no_entry)
         }
 
-        // hard coded entrees for all platforms
-        DesiredCliOutcomes::Currency => &currency,
+
         DesiredCliOutcomes::WttuInfo => &wtto_info,
     };
 
@@ -149,33 +146,28 @@ pub fn find_cli_suggestons(
     }
 }
 
-/** Cli Helper functions */
-
 fn create_json_output(os: &SupportedPlatforms) -> serde_json::Value {
     let json_output: serde_json::Value = match os {
         SupportedPlatforms::Linux => {
-            let data = fs::read_to_string("./src/json_platform_data/linux-general.json")
-                .expect("unable to read json file");
-            let json_data: serde_json::Value =
-                serde_json::from_str(&data).expect("json is malformed");
+            let data = std::include_str!("./json_platform_data/linux-general.json");
+            let json_data: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
+            let platform = &json_data["platform"];
 
-            return_json_output(&json_data["platform"], json!("linux"), &json_data)
+            return_json_output(platform, json!("linux"), &json_data)
         }
         SupportedPlatforms::Mac => {
-            let data = fs::read_to_string("./src/json_platform_data/mac.json")
-                .expect("unable to read json file");
+            let data = std::include_str!("./json_platform_data/mac.json");
+            let json_data: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
+            let platform = &json_data["platform"];
 
-            let json_data: serde_json::Value =
-                serde_json::from_str(&data).expect("json is malformed");
-            return_json_output(&json_data["platform"], json!("mac"), &json_data)
+            return_json_output(platform, json!("mac"), &json_data)
         }
         SupportedPlatforms::Windows => {
-            let data = fs::read_to_string("./src/json_platform_data/windows.json")
-                .expect("unable to read json file");
+            let data = std::include_str!("./json_platform_data/windows.json");
+            let json_data: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
+            let platform = &json_data["platform"];
 
-            let json_data: serde_json::Value =
-                serde_json::from_str(&data).expect("json is malformed");
-            return_json_output(&json_data["platform"], json!("windows"), &json_data)
+            return_json_output(platform, json!("windows"), &json_data)
         }
         // for cases when they run a command on the underlining OS and nothing shows up
         SupportedPlatforms::Unsupported => {
@@ -200,11 +192,15 @@ fn return_json_output(
     json_platform: serde_json::Value,
     json: &serde_json::Value,
 ) -> serde_json::Value {
-    let panic_msg = "create_json_output() - json data is malformed and pointing to the wrong platform. might need to open up the hood and fix the data's json file, or reach out to the dev";
+    // TODO
+    // this shouldn't panic, it should just log that GUI options aren't present yet
+    // let panic_msg = "create_json_output() - json data is malformed and pointing to the wrong platform. might need to open up the hood and fix the data's json file, or reach out to the dev";
     if platform == &json_platform {
         json!(&json)
     } else {
-        panic!("{}", panic_msg)
+        println!("platform not not supported yet, falling back to cli option only");
+        json!(&json)
+        // panic!("{}", panic_msg)
     }
 }
 

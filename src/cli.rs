@@ -1,7 +1,7 @@
 // use anyhow::Result;
 use clap::{Parser, ValueEnum};
 use serde_json::json;
-use std::{fs};
+use std;
 
 /**
  * This mod creates Command Line suggestions. If extending to GUI, protocol, paradigm, language, etc etc, create addition mods and update accordingly.
@@ -117,9 +117,7 @@ pub fn find_cli_suggestons(
     if let Err(e) = writeln!(writer, "{}", output) {
         eprint!("{:?}", e)
     }
-
 }
-
 
 fn create_json_output(os: &SupportedPlatforms) -> serde_json::Value {
     // TODO:
@@ -134,8 +132,7 @@ fn create_json_output(os: &SupportedPlatforms) -> serde_json::Value {
     let json_output: serde_json::Value;
     match os {
         SupportedPlatforms::Linux => {
-            let data = fs::read_to_string("./src/json_platform_data/linux-general.json")
-                .expect("unable to read json file");
+            let data = std::include_str!("./json_platform_data/linux-general.json");
             let json: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
             let platform = &json["platform"];
             let linux = json!("linux");
@@ -148,8 +145,7 @@ fn create_json_output(os: &SupportedPlatforms) -> serde_json::Value {
             }
         }
         SupportedPlatforms::Mac => {
-            let data = fs::read_to_string("./src/json_platform_data/mac.json")
-                .expect("unable to read json file");
+            let data = std::include_str!("./json_platform_data/mac.json");
             let json: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
             let platform = &json["platform"];
             let mac = json!("mac");
@@ -161,8 +157,7 @@ fn create_json_output(os: &SupportedPlatforms) -> serde_json::Value {
             }
         }
         SupportedPlatforms::Windows => {
-            let data = fs::read_to_string("./src/json_platform_data/windows.json")
-                .expect("unable to read json file");
+            let data = std::include_str!("./json_platform_data/windows.json");
             let json: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
             let platform = &json["platform"];
             let windows = json!("windows");
@@ -190,23 +185,33 @@ pub fn underlining_os_to_enum(os: &str) -> SupportedPlatforms {
     }
 }
 
-
-
 // TODO:
 // find a better way to automate the testing instead of magic strings
 #[test]
 fn find_encode_suggeston() {
     // the writer
     let mut result = Vec::new();
-    find_cli_suggestons(&DesiredOutcomes::Encode, &mut result, &SupportedPlatforms::Linux);
+    find_cli_suggestons(
+        &DesiredOutcomes::Encode,
+        &mut result,
+        &SupportedPlatforms::Linux,
+    );
     assert_eq!(result, b"\"base64\"\n");
 
     let mut result = Vec::new();
-    find_cli_suggestons(&DesiredOutcomes::Encode, &mut result, &SupportedPlatforms::Mac);
+    find_cli_suggestons(
+        &DesiredOutcomes::Encode,
+        &mut result,
+        &SupportedPlatforms::Mac,
+    );
     assert_eq!(result, b"\"base64\"\n");
 
     let mut result = Vec::new();
-    find_cli_suggestons(&DesiredOutcomes::Encode, &mut result, &SupportedPlatforms::Windows);
+    find_cli_suggestons(
+        &DesiredOutcomes::Encode,
+        &mut result,
+        &SupportedPlatforms::Windows,
+    );
     assert_eq!(result, b"\"CertUtil\"\n");
 }
 
@@ -216,6 +221,10 @@ fn find_info_suggeston() {
     let wtto_byte_info :&[u8; 112]  = b"\"wtto is a tool that aims to give decent suggestions for how to accomplish a known task. Run -h for more info.\"\n";
 
     let mut result = Vec::new();
-    find_cli_suggestons(&DesiredOutcomes::WttuInfo, &mut result, &SupportedPlatforms::Windows);
+    find_cli_suggestons(
+        &DesiredOutcomes::WttuInfo,
+        &mut result,
+        &SupportedPlatforms::Windows,
+    );
     assert_eq!(result, wtto_byte_info);
 }

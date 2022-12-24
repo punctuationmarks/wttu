@@ -137,7 +137,6 @@ pub fn find_cli_suggestons(
             json_output.get("version_control").unwrap_or(&no_entry)
         }
 
-
         DesiredCliOutcomes::WttuInfo => &wtto_info,
     };
 
@@ -150,21 +149,24 @@ fn create_json_output(os: &SupportedPlatforms) -> serde_json::Value {
     let json_output: serde_json::Value = match os {
         SupportedPlatforms::Linux => {
             let data = std::include_str!("./json_platform_data/linux-general.json");
-            let json_data: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
+            let json_data: serde_json::Value =
+                serde_json::from_str(&data).expect("json is malformed");
             let platform = &json_data["platform"];
 
             return_json_output(platform, json!("linux"), &json_data)
         }
         SupportedPlatforms::Mac => {
             let data = std::include_str!("./json_platform_data/mac.json");
-            let json_data: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
+            let json_data: serde_json::Value =
+                serde_json::from_str(&data).expect("json is malformed");
             let platform = &json_data["platform"];
 
             return_json_output(platform, json!("mac"), &json_data)
         }
         SupportedPlatforms::Windows => {
             let data = std::include_str!("./json_platform_data/windows.json");
-            let json_data: serde_json::Value = serde_json::from_str(&data).expect("json is malformed");
+            let json_data: serde_json::Value =
+                serde_json::from_str(&data).expect("json is malformed");
             let platform = &json_data["platform"];
 
             return_json_output(platform, json!("windows"), &json_data)
